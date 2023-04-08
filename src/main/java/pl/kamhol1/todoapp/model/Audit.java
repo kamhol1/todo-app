@@ -1,13 +1,13 @@
 package pl.kamhol1.todoapp.model;
 
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 
 import java.time.LocalDateTime;
 
-@MappedSuperclass
-abstract class BaseAuditableEntity {
+@Embeddable
+class Audit {
     private LocalDateTime createdOn;
     private LocalDateTime updatedOn;
 

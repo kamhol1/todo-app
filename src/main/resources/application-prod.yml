@@ -1,15 +1,11 @@
 spring:
   datasource:
     driver-class-name: org.h2.Driver
-    url: 'jdbc:h2:file:./db'
+    url: 'jdbc:h2:mem:db'
     username: 'sa'
     password: 'password'
   jpa:
     database-platform: 'org.hibernate.dialect.H2Dialect'
   h2:
     console:
-      enabled: true
-      path: '/console'
-  main:
-    banner-mode: off
-task.template.allowMultipleTasks: false
+      enabled: false

@@ -1,5 +1,6 @@
 package pl.kamhol1.todoapp.controller;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import pl.kamhol1.todoapp.model.TaskRepository;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 class TaskController {
@@ -52,7 +52,22 @@ class TaskController {
         if (!repository.existsById(id))
             return ResponseEntity.notFound().build();
 
-        repository.save(toUpdate);
+        repository.findById(id)
+                .ifPresent(task -> {
+                    task.updateFrom(toUpdate);
+                    repository.save(task);
+                });
+        return ResponseEntity.noContent().build();
+    }
+
+    @Transactional
+    @PatchMapping("/tasks/{id}")
+    public ResponseEntity<?> toggleTask(@PathVariable int id) {
+        if (!repository.existsById(id))
+            return ResponseEntity.notFound().build();
+
+        repository.findById(id)
+                .ifPresent(task -> task.setDone(!task.isDone()));
         return ResponseEntity.noContent().build();
     }
 }
