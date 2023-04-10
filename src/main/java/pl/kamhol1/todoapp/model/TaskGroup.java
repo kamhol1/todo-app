@@ -3,8 +3,6 @@ package pl.kamhol1.todoapp.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,8 +16,16 @@ public class TaskGroup {
     private boolean done;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
     private Set<Task> tasks;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-    protected TaskGroup() {
+    TaskGroup() {
+    }
+
+    public TaskGroup(String description, Set<Task> tasks) {
+        this.description = description;
+        this.tasks = tasks;
     }
 
     public int getId() {
@@ -50,7 +56,15 @@ public class TaskGroup {
         return tasks;
     }
 
-    void setTasks(Set<Task> tasks) {
+    public void setTasks(Set<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    Project getProject() {
+        return project;
+    }
+
+    void setProject(Project project) {
+        this.project = project;
     }
 }
