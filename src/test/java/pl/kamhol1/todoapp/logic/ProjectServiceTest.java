@@ -2,23 +2,23 @@ package pl.kamhol1.todoapp.logic;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.cglib.core.Local;
 import pl.kamhol1.todoapp.TaskConfigurationProperties;
 import pl.kamhol1.todoapp.model.*;
 import pl.kamhol1.todoapp.model.projection.GroupReadModel;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ProjectServiceTest {
-
     @Test
     @DisplayName("Should throw IllegalStateException when configured no multiple groups and the other undone group exists")
     void createGroup_noMultipleGroupsConfigAndUndoneGroupExists_throwsIllegalStateException() {
@@ -28,10 +28,10 @@ class ProjectServiceTest {
         TaskConfigurationProperties mockConfig = configurationReturning(false);
 
         // system under test
-        var toTest = new ProjectService(null, mockGroupRepository, mockConfig);
+        ProjectService toTest = new ProjectService(null, mockGroupRepository, mockConfig);
 
         //when
-        var exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
+        Throwable exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
 
         //then
         assertThat(exception)
@@ -43,16 +43,16 @@ class ProjectServiceTest {
     @DisplayName("Should throw IllegalArgumentException when configuration is OK and there are no projects for a given ID")
     void createGroup_configurationOkAndNoProjects_throwsIllegalArgumentException() {
         //given
-        var mockRepository = mock(ProjectRepository.class);
+        ProjectRepository mockRepository = mock(ProjectRepository.class);
         when(mockRepository.findById(anyInt())).thenReturn(Optional.empty());
         //and
         TaskConfigurationProperties mockConfig = configurationReturning(true);
 
         // system under test
-        var toTest = new ProjectService(mockRepository, null, mockConfig);
+        ProjectService toTest = new ProjectService(mockRepository, null, mockConfig);
 
         //when
-        var exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
+        Throwable exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
 
         //then
         assertThat(exception)
@@ -64,7 +64,7 @@ class ProjectServiceTest {
     @DisplayName("Should throw IllegalArgumentException when configured no multiple groups and there are no group and projects for a given ID")
     void createGroup_noMultipleGroupsConfigAndNoUndoneGroupExistsNoProjects_throwsIllegalArgumentException() {
         //given
-        var mockRepository = mock(ProjectRepository.class);
+        ProjectRepository mockRepository = mock(ProjectRepository.class);
         when(mockRepository.findById(anyInt())).thenReturn(Optional.empty());
         //and
         TaskGroupRepository mockGroupRepository = groupRepositoryReturning(false);
@@ -72,10 +72,10 @@ class ProjectServiceTest {
         TaskConfigurationProperties mockConfig = configurationReturning(true);
 
         // system under test
-        var toTest = new ProjectService(mockRepository, mockGroupRepository, mockConfig);
+        ProjectService toTest = new ProjectService(mockRepository, mockGroupRepository, mockConfig);
 
         //when
-        var exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
+        Throwable exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
 
         //then
         assertThat(exception)
@@ -87,10 +87,10 @@ class ProjectServiceTest {
     @DisplayName("Should create new group from project")
     void createGroup_configurationOkProjectExists_createsAndSavesGroup() {
         // given
-        var today = LocalDate.now().atStartOfDay();
+        LocalDateTime today = LocalDate.now().atStartOfDay();
         // and
-        var project = projectWith("bar", Set.of(-1, -2));
-        var mockRepository = mock(ProjectRepository.class);
+        Project project = projectWith("bar", Set.of(-1, -2));
+        ProjectRepository mockRepository = mock(ProjectRepository.class);
         when(mockRepository.findById(anyInt()))
                 .thenReturn(Optional.of(project));
         // and
@@ -100,7 +100,7 @@ class ProjectServiceTest {
         TaskConfigurationProperties mockConfig = configurationReturning(true);
 
         // system under test
-        var toTest = new ProjectService(mockRepository, inMemoryGroupRepository, mockConfig);
+        ProjectService toTest = new ProjectService(mockRepository, inMemoryGroupRepository, mockConfig);
 
         //when
         GroupReadModel result = toTest.createGroup(today, 1);
@@ -120,7 +120,7 @@ class ProjectServiceTest {
                     when(step.getDaysToDeadline()).thenReturn(days);
                     return step;
                 }).collect(Collectors.toSet());
-        var result = mock(Project.class);
+        Project result = mock(Project.class);
         when(result.getDescription()).thenReturn(description);
         when(result.getSteps()).thenReturn(steps);
         return result;
@@ -131,15 +131,15 @@ class ProjectServiceTest {
     }
 
     private static TaskGroupRepository groupRepositoryReturning(boolean value) {
-        var mockGroupRepository = mock(TaskGroupRepository.class);
+        TaskGroupRepository mockGroupRepository = mock(TaskGroupRepository.class);
         when(mockGroupRepository.existsByDoneIsFalseAndProject_Id(anyInt())).thenReturn(value);
         return mockGroupRepository;
     }
 
     private static TaskConfigurationProperties configurationReturning(boolean value) {
-        var mockTemplate = mock(TaskConfigurationProperties.Template.class);
+        TaskConfigurationProperties.Template mockTemplate = mock(TaskConfigurationProperties.Template.class);
         when(mockTemplate.isAllowMultipleTasks()).thenReturn(value);
-        var mockConfig = mock(TaskConfigurationProperties.class);
+        TaskConfigurationProperties mockConfig = mock(TaskConfigurationProperties.class);
         when(mockConfig.getTemplate()).thenReturn(mockTemplate);
         return mockConfig;
     }
@@ -166,7 +166,7 @@ class ProjectServiceTest {
         public TaskGroup save(TaskGroup entity) {
             if (entity.getId() == 0) {
                 try {
-                    var field = TaskGroup.class.getDeclaredField("id");
+                    Field field = TaskGroup.class.getDeclaredField("id");
                     field.setAccessible(true);
                     field.set(entity, ++index);
                 } catch (NoSuchFieldException | IllegalAccessException e) {

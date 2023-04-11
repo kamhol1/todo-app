@@ -14,7 +14,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class TaskGroupServiceTest {
-
     @Test
     @DisplayName("Should throw IllegalStateException when there are undone tasks")
     void toggleGroup_undoneTasks_throwsIllegalStateException() {
@@ -22,10 +21,10 @@ class TaskGroupServiceTest {
         TaskRepository mockTaskRepository = taskRepositoryReturning(true);
 
         // system under test
-        var toTest = new TaskGroupService(null, mockTaskRepository);
+        TaskGroupService toTest = new TaskGroupService(null, mockTaskRepository);
 
         // when
-        var exception = catchThrowable(() -> toTest.toggleGroup(1));
+        Throwable exception = catchThrowable(() -> toTest.toggleGroup(1));
 
         // then
         assertThat(exception)
@@ -43,10 +42,10 @@ class TaskGroupServiceTest {
         when(mockGroupRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         // system under test
-        var toTest = new TaskGroupService(mockGroupRepository, mockTaskRepository);
+        TaskGroupService toTest = new TaskGroupService(mockGroupRepository, mockTaskRepository);
 
         // when
-        var exception = catchThrowable(() -> toTest.toggleGroup(1));
+        Throwable exception = catchThrowable(() -> toTest.toggleGroup(1));
 
         // then
         assertThat(exception)
@@ -60,14 +59,14 @@ class TaskGroupServiceTest {
         // given
         TaskRepository mockTaskRepository = taskRepositoryReturning(false);
         // and
-        var group = new TaskGroup();
-        var beforeToggle = group.isDone();
+        TaskGroup group = new TaskGroup();
+        boolean beforeToggle = group.isDone();
         // and
         TaskGroupRepository mockGroupRepository = mock(TaskGroupRepository.class);
         when(mockGroupRepository.findById(anyInt())).thenReturn(Optional.of(group));
 
         // system under test
-        var toTest = new TaskGroupService(mockGroupRepository, mockTaskRepository);
+        TaskGroupService toTest = new TaskGroupService(mockGroupRepository, mockTaskRepository);
 
         // when
         toTest.toggleGroup(1);
