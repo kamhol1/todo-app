@@ -115,7 +115,7 @@ class ProjectServiceTest {
     private Project projectWith(String description, Set<Integer> daysToDeadline) {
         Set<ProjectStep> steps = daysToDeadline.stream()
                 .map(days -> {
-                    var step = mock(ProjectStep.class);
+                    ProjectStep step = mock(ProjectStep.class);
                     when(step.getDescription()).thenReturn("foo");
                     when(step.getDaysToDeadline()).thenReturn(days);
                     return step;
