@@ -20,7 +20,7 @@ public class TaskGroup {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    TaskGroup() {
+    public TaskGroup() {
     }
 
     public TaskGroup(String description, Set<Task> tasks) {
