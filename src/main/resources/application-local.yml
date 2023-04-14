@@ -12,3 +12,8 @@ spring:
     console:
       enabled: true
       path: '/console'
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

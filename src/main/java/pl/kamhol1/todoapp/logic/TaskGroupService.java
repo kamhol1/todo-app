@@ -1,6 +1,7 @@
 package pl.kamhol1.todoapp.logic;
 
 import org.springframework.stereotype.Service;
+import pl.kamhol1.todoapp.model.Project;
 import pl.kamhol1.todoapp.model.TaskGroup;
 import pl.kamhol1.todoapp.model.TaskGroupRepository;
 import pl.kamhol1.todoapp.model.TaskRepository;
@@ -21,7 +22,12 @@ public class TaskGroupService {
     }
 
     public GroupReadModel createModel(GroupWriteModel source) {
-        return new GroupReadModel(repository.save(source.toGroup()));
+        return createModel(source, null);
+    }
+
+    GroupReadModel createModel(GroupWriteModel source, Project project) {
+        TaskGroup result = repository.save(source.toGroup(project));
+        return new GroupReadModel(result);
     }
 
     public List<GroupReadModel> readAll() {

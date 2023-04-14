@@ -1,10 +1,13 @@
 package pl.kamhol1.todoapp.model.projection;
 
+import jakarta.validation.constraints.NotBlank;
 import pl.kamhol1.todoapp.model.Task;
+import pl.kamhol1.todoapp.model.TaskGroup;
 
 import java.time.LocalDateTime;
 
 public class GroupTaskWriteModel {
+    @NotBlank(message = "Task group description cannot be empty")
     private String description;
     private LocalDateTime deadline;
 
@@ -24,8 +27,7 @@ public class GroupTaskWriteModel {
         this.deadline = deadline;
     }
 
-    public Task toTask() {
-        return new Task(description, deadline);
-
+    public Task toTask(TaskGroup group) {
+        return new Task(description, deadline, group);
     }
 }

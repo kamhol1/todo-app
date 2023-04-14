@@ -28,7 +28,7 @@ class ProjectServiceTest {
         TaskConfigurationProperties mockConfig = configurationReturning(false);
 
         // system under test
-        ProjectService toTest = new ProjectService(null, mockGroupRepository, mockConfig);
+        ProjectService toTest = new ProjectService(null, mockGroupRepository, null, mockConfig);
 
         //when
         Throwable exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
@@ -49,7 +49,7 @@ class ProjectServiceTest {
         TaskConfigurationProperties mockConfig = configurationReturning(true);
 
         // system under test
-        ProjectService toTest = new ProjectService(mockRepository, null, mockConfig);
+        ProjectService toTest = new ProjectService(mockRepository, null, null, mockConfig);
 
         //when
         Throwable exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
@@ -72,7 +72,7 @@ class ProjectServiceTest {
         TaskConfigurationProperties mockConfig = configurationReturning(true);
 
         // system under test
-        ProjectService toTest = new ProjectService(mockRepository, mockGroupRepository, mockConfig);
+        ProjectService toTest = new ProjectService(mockRepository, mockGroupRepository, null, mockConfig);
 
         //when
         Throwable exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
@@ -95,12 +95,13 @@ class ProjectServiceTest {
                 .thenReturn(Optional.of(project));
         // and
         InMemoryGroupRepository inMemoryGroupRepository = inMemoryGroupRepository();
+        TaskGroupService serviceWithInMemRepository = dummyGroupService(inMemoryGroupRepository);
         int countBeforeCall = inMemoryGroupRepository.count();
         // and
         TaskConfigurationProperties mockConfig = configurationReturning(true);
 
         // system under test
-        ProjectService toTest = new ProjectService(mockRepository, inMemoryGroupRepository, mockConfig);
+        ProjectService toTest = new ProjectService(mockRepository, inMemoryGroupRepository, serviceWithInMemRepository, mockConfig);
 
         //when
         GroupReadModel result = toTest.createGroup(today, 1);
@@ -110,6 +111,10 @@ class ProjectServiceTest {
         assertThat(result.getDeadline()).isEqualTo(today.minusDays(1));
         assertThat(result.getTasks()).allMatch(task -> task.getDescription().equals("foo"));
         assertThat(countBeforeCall + 1).isEqualTo(inMemoryGroupRepository.count());
+    }
+
+    private static TaskGroupService dummyGroupService(InMemoryGroupRepository inMemoryGroupRepository) {
+        return new TaskGroupService(inMemoryGroupRepository, null);
     }
 
     private Project projectWith(String description, Set<Integer> daysToDeadline) {

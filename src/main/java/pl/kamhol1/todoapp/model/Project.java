@@ -11,14 +11,14 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotBlank(message = "Project description cannot be blank")
+    @NotBlank(message = "The project description cannot be empty")
     private String description;
     @OneToMany(mappedBy = "project")
     private Set<TaskGroup> groups;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Set<ProjectStep> steps;
 
-    protected Project() {
+    public Project() {
     }
 
     public int getId() {
@@ -33,7 +33,7 @@ public class Project {
         return description;
     }
 
-    void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -49,7 +49,7 @@ public class Project {
         return steps;
     }
 
-    void setSteps(Set<ProjectStep> steps) {
+    public void setSteps(Set<ProjectStep> steps) {
         this.steps = steps;
     }
 }
