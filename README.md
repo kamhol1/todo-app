@@ -9,11 +9,12 @@ The Todo App has the following features:
 * Task management: Users can create tasks and toggle them as done/undone. Tasks have a description, deadline and done status.
 * Task groups management: Users can create groups of tasks, which can be associated with project steps.
 * Project management: Users can create projects. Projects have a title and steps to complete. Every step has a description and deadline. Users can specify the whole project's deadline and on this basis create a group (project) of tasks (steps) to do.
+* The functionalities described above are secured with user authentication implemented with Spring Security.
 
 ## Tech Stack
 * Java 17
 * Spring Framework
-* Hiberante
+* Hibernate
 * Flyway
 * H2 Database
 * JUnit5
