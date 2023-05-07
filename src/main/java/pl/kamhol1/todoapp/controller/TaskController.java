@@ -4,12 +4,16 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pl.kamhol1.todoapp.logic.TaskService;
 import pl.kamhol1.todoapp.model.Task;
 import pl.kamhol1.todoapp.model.TaskRepository;
+import pl.kamhol1.todoapp.model.projection.GroupWriteModel;
 
 import java.net.URI;
 import java.util.List;
@@ -18,12 +22,12 @@ import java.util.List;
 @RequestMapping("/tasks")
 class TaskController {
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
+    private final ApplicationEventPublisher eventPublisher;
     private final TaskRepository repository;
-    private final TaskService service;
 
-    TaskController(TaskRepository repository, TaskService service) {
+    TaskController(TaskRepository repository, TaskService service, ApplicationEventPublisher eventPublisher) {
         this.repository = repository;
-        this.service = service;
+        this.eventPublisher = eventPublisher;
     }
 
     @PostMapping
@@ -77,7 +81,8 @@ class TaskController {
             return ResponseEntity.notFound().build();
 
         repository.findById(id)
-                .ifPresent(task -> task.setDone(!task.isDone()));
+                .map(Task::toggle)
+                .ifPresent(eventPublisher::publishEvent);
         return ResponseEntity.noContent().build();
     }
 }

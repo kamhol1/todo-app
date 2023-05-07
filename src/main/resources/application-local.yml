@@ -12,8 +12,30 @@ spring:
     console:
       enabled: true
       path: '/console'
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          keycloak:
+#            client-id: 'todo-app-client'
+#            authorization-grant-type: 'authorization_code'
+#            scope: 'openid'
+#        provider:
+#          keycloak:
+#            issuer-uri: 'http://localhost:8180/realms/TodoApp'
+##            user-name-attribute: 'preferred_username'
+#      resourceserver:
+#        jwt:
+#          issuer-uri: 'http://localhost:8180/realms/TodoApp'
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+
+#keycloak:
+#  realm: TodoApp
+#  auth-server-url: http://localhost:8180/auth
+#  resource: todo-app-client
+#  public-client: true
+#  bearer-only: true

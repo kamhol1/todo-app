@@ -2,6 +2,7 @@ package pl.kamhol1.todoapp.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import pl.kamhol1.todoapp.model.event.TaskEvent;
 
 import java.time.LocalDateTime;
 
@@ -55,8 +56,9 @@ public class Task {
         return done;
     }
 
-    public void setDone(boolean done) {
-        this.done = done;
+    public TaskEvent toggle() {
+        this.done = !this.done;
+        return TaskEvent.changed(this);
     }
 
     public LocalDateTime getDeadline() {
